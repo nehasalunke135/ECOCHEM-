@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ReacSense — Green Chemistry Intelligence Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ── Animated background canvas ── -->
+<canvas id="bgCanvas"></canvas>
+
+<!-- ── Navigation ── -->
+<nav id="topNav">
+  <div class="nav-inner">
+    <div class="nav-brand">
+      <span class="brand-dot"></span>
+      <span class="brand-text">ReacSense</span>
+      <span class="brand-tag">Green Chemistry Intelligence</span>
+    </div>
+    <div class="nav-pills">
+      <button class="nav-pill active" onclick="showSection('search')">Search</button>
+      <button class="nav-pill" onclick="showSection('dashboard')">Dashboard</button>
+      <button class="nav-pill" onclick="showSection('ai')">AI Advisor</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════
+     SECTION 1: SEARCH
+══════════════════════════════════════════ -->
+<section id="section-search" class="page-section active">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-eyebrow">
+      <span class="dot-pulse"></span>
+      Industrial Chemical Intelligence Platform
+    </div>
+    <h1 class="hero-title">
+      <em>ECOCHEM</em>
+    </h1>
+    <p class="hero-sub">
+      Search <span id="totalCount">0</span> industrial reactions across high-waste industries.
+      Get toxin profiles, sustainability scores, and green alternatives — instantly.
+    </p>
+
+    <!-- Filters row -->
+    <div class="filter-row">
+      <button class="filter-chip active" data-industry="all" onclick="setFilter(this,'all')">All Industries</button>
+      <button class="filter-chip" data-industry="Petroleum & Petrochemicals" onclick="setFilter(this,'Petroleum & Petrochemicals')">Petroleum</button>
+      <button class="filter-chip" data-industry="Textile & Dyeing" onclick="setFilter(this,'Textile & Dyeing')">Textiles</button>
+      <button class="filter-chip" data-industry="Steel & Metallurgy" onclick="setFilter(this,'Steel & Metallurgy')">Steel</button>
+      <button class="filter-chip" data-industry="Pharmaceuticals" onclick="setFilter(this,'Pharmaceuticals')">Pharma</button>
+      <button class="filter-chip" data-industry="Agrochemicals & Fertilizers" onclick="setFilter(this,'Agrochemicals & Fertilizers')">Agrochem</button>
+      <button class="filter-chip" data-industry="Pulp & Paper" onclick="setFilter(this,'Pulp & Paper')">Pulp & Paper</button>
+      <button class="filter-chip" data-industry="Cement & Construction" onclick="setFilter(this,'Cement & Construction')">Cement</button>
+      <button class="filter-chip" data-industry="Plastics & Polymers" onclick="setFilter(this,'Plastics & Polymers')">Plastics</button>
+      <button class="filter-chip" data-industry="Mining & Minerals" onclick="setFilter(this,'Mining & Minerals')">Mining</button>
+      <button class="filter-chip" data-industry="Electronics & Semiconductors" onclick="setFilter(this,'Electronics & Semiconductors')">Electronics</button>
+    </div>
+
+    <!-- Search bar -->
+    <div class="search-bar" id="searchBar">
+      <div class="search-inner">
+        <svg class="search-ico" viewBox="0 0 20 20" fill="none"><circle cx="8.5" cy="8.5" r="5.5" stroke="currentColor" stroke-width="1.5"/><path d="M13 13l3.5 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <input type="text" id="searchInput" placeholder="Search by chemical, reaction, process, industry, or toxin…" autocomplete="off"
+          oninput="liveSearch()" onkeydown="if(event.key==='Enter') doSearch()">
+        <button class="search-clear" id="clearBtn" onclick="clearSearch()" style="display:none">✕</button>
+        <button class="search-btn" onclick="doSearch()">Search</button>
+      </div>
+      <div id="suggestions" class="suggestions-box" style="display:none"></div>
+    </div>
+  </div>
+
+  <!-- Sort bar -->
+  <div class="sort-bar" id="sortBar" style="display:none">
+    <span class="result-count" id="resultCount"></span>
+    <div class="sort-controls">
+      <span class="sort-label">Sort by</span>
+      <select id="sortSelect" onchange="sortResults()">
+        <option value="relevance">Relevance</option>
+        <option value="greenScore-asc">Green Score (worst first)</option>
+        <option value="greenScore-desc">Green Score (best first)</option>
+        <option value="toxin-desc">Toxin Level (most toxic)</option>
+        <option value="industry">Industry</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div id="results" class="results-grid"></div>
+
+  <!-- Browse all trigger -->
+  <div class="browse-cta" id="browseCta">
+    <button onclick="browseAll()" class="btn-outline">Browse all reactions</button>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     SECTION 2: DASHBOARD
+══════════════════════════════════════════ -->
+<section id="section-dashboard" class="page-section">
+  <div class="dash-wrap">
+    <div class="section-header">
+      <h2>Industry Sustainability Dashboard</h2>
+      <p>Pattern analysis and environmental impact clustering across all industries</p>
+    </div>
+
+    <!-- KPI row -->
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-val" id="kpiTotal">0</div>
+        <div class="kpi-lbl">Total reactions</div>
+      </div>
+      <div class="kpi-card kpi-red">
+        <div class="kpi-val" id="kpiCritical">0</div>
+        <div class="kpi-lbl">Critical risk processes</div>
+      </div>
+      <div class="kpi-card kpi-amber">
+        <div class="kpi-val" id="kpiPoor">0</div>
+        <div class="kpi-lbl">Poor sustainability</div>
+      </div>
+      <div class="kpi-card kpi-green">
+        <div class="kpi-val" id="kpiGood">0</div>
+        <div class="kpi-lbl">Good / Best practice</div>
+      </div>
+    </div>
+
+    <!-- Charts row -->
+    <div class="charts-row">
+      <div class="chart-card">
+        <div class="chart-title">Green Score by Industry (avg)</div>
+        <div id="barChart" class="bar-chart"></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Toxin Level Distribution</div>
+        <div id="donutChart" class="donut-wrap"></div>
+      </div>
+    </div>
+
+    <!-- Industry heatmap -->
+    <div class="heatmap-card">
+      <div class="chart-title">Sustainability Risk Heatmap — All Processes</div>
+      <div id="heatmap" class="heatmap-grid"></div>
+    </div>
+
+    <!-- 12 Green Chemistry Principles coverage -->
+    <div class="principles-card">
+      <div class="chart-title">12 Principles of Green Chemistry — Coverage Across Dataset</div>
+      <div id="principlesChart" class="principles-grid"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     SECTION 3: AI ADVISOR
+══════════════════════════════════════════ -->
+<section id="section-ai" class="page-section">
+  <div class="ai-wrap">
+    <div class="section-header">
+      <h2>AI Green Chemistry Advisor</h2>
+      <p>Powered by Groq — ask anything about reactions, sustainability, or green alternatives</p>
+    </div>
+
+    <!-- Suggested prompts -->
+    <div class="prompt-suggestions">
+      <button class="prompt-chip" onclick="usePrompt(this)">What are the most toxic reactions in petroleum refining?</button>
+      <button class="prompt-chip" onclick="usePrompt(this)">Suggest green alternatives for textile dyeing wastewater</button>
+      <button class="prompt-chip" onclick="usePrompt(this)">Which industries violate the most green chemistry principles?</button>
+      <button class="prompt-chip" onclick="usePrompt(this)">How can steel manufacturing reduce its CO₂ footprint?</button>
+      <button class="prompt-chip" onclick="usePrompt(this)">Explain the 12 principles of green chemistry with examples</button>
+      <button class="prompt-chip" onclick="usePrompt(this)">What is the environmental impact of PVC production?</button>
+    </div>
+
+    <!-- Chat window -->
+    <div id="chatWindow" class="chat-window">
+      <div class="chat-msg assistant">
+        <div class="msg-avatar">RS</div>
+        <div class="msg-body">
+          <p>Hello. I'm the ReacSense AI Advisor, specialized in industrial green chemistry and sustainable process design.</p>
+          <p>I have full access to all <strong id="aiReactionCount">0</strong> reactions in the database and I'm trained on the 12 Principles of Green Chemistry. Ask me about toxicity, alternatives, process improvements, or sustainability strategy for any industry.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Input row -->
+    <div class="chat-input-row">
+      <textarea id="chatInput" rows="2" placeholder="Ask about any reaction, toxin, green alternative, or process…" onkeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault();sendAI()}"></textarea>
+      <button class="chat-send" onclick="sendAI()" id="sendBtn">
+        <svg viewBox="0 0 20 20" fill="none" width="18" height="18"><path d="M3 10l14-7-5 7 5 7-14-7z" fill="currentColor"/></svg>
+      </button>
+    </div>
+    <p class="ai-disclaimer">AI responses are generated by Groq (LLaMA 3.3). Always verify recommendations with qualified chemists before industrial implementation.</p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     REACTION DETAIL MODAL
+══════════════════════════════════════════ -->
+<div id="modal" class="modal-overlay" onclick="closeModal(event)">
+  <div class="modal-box" id="modalBox">
+    <button class="modal-close" onclick="closeModalBtn()">✕</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<script src="data.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
